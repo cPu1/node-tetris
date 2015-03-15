@@ -1,6 +1,7 @@
 var tetrisBoard = require('./board'),
-	GamOverError = tetrisBoard.GamOverError,
+	GameoverError = tetrisBoard.GameoverError,
 	assert = require('assert');
+
 
 var LEFT = 'a'.charCodeAt();
 var RIGHT = 'd'.charCodeAt();
@@ -9,10 +10,6 @@ var ROTATE_RIGHT = 's'.charCodeAt();
 
 
 process.stdin.setRawMode(true); //as opposed to cooked mode
-
-console.log = function () {
-
-}
 
 var board = tetrisBoard({boardSize: 20, out: process.stdout});
 
@@ -33,16 +30,22 @@ process.stdin.on('data', function (key) {
 					board.handleRightRotate();
 					break;
 				default:
-					board.out.write('Invalid key: ' + String.fromCharCode(key));
+					board.out.write('\nInvalid key: ' + String.fromCharCode(key) + '. Exiting...');
 					this.end();
 					break;
 			}
 	} catch (err) {
 			if(err instanceof assert.AssertionError) {
-				board.handleInvalidMove(err.message);
-			} else if(err instanceof GameoverError) {
-				board.out.write(err.message);
-				this.end();
+				try {
+					board.handleInvalidMove(err.message);
+				} catch (err) {
+					if(err instanceof GameoverError) {
+						board.out.write('\n' + err.message);
+						this.end();
+					} else {
+						throw err;
+					}
+				}
 			} else {
 				throw err; //notify of any potential bugs
 			}

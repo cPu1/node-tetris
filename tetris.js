@@ -61,29 +61,24 @@ Tetris.prototype.rotatePieceLeft = function () {
 Tetris.prototype.allowsValidMove = function () {
 	var movePermutations = MOVE_PERMUTATIONS;
 
-	process.stdout.write('Pieceon board ' + this.pieceOnBoard.x)
 	if(this.pieceOnBoard.x !== 0) {
 		movePermutations = movePermutations.concat(['movePieceLeft', 'movePieceRight']);
 	}
 	if(this.pieceOnBoard.x + this.pieceOnBoard.piece.rows !== this.boardSize) {
 		//movePermutations = movePermutations.concat(['movePieceRight', 'movePieceLeft']);
 	}
-	var l = movePermutations.filter(function (moveMethod) {
+	var permutations = movePermutations.filter(function (moveMethod) {
 		var moveInvalid = false;
 		try {
-			process.stdout.write('Invoking ' + moveMethod);
 			this[moveMethod]();
 			this.pieceOnBoard.y --; //restore y position if this move was successful
 		} catch (err) {
-			process.stdout.write('Error invoking ' + moveMethod);
 			moveInvalid = true;
 		}
 		return moveInvalid;
-	}, this).length;
+	}, this);
 
-	process.stdout.write('LLL ' + l + ' ' + movePermutations.length);
-	return true;
-
+	return permutations.length !== movePermutations.length;
 };
 
 
@@ -104,7 +99,6 @@ Tetris.prototype.updateBoard = function (transformedPiece) {
 		pieceHasLanded = false,
 		i,j;
 
-	console.log(rows, cols, pieceX, pieceY, this.board, pieceStructure, pieceY + cols -1)
 	assert(this.boardSize > pieceX + cols - 1, 'Invalid move: x = ' + (pieceX + cols));
 	assert(this.boardSize > pieceY + rows - 1, 'Invalid move: y = ' + [pieceY, cols].join());
 
@@ -114,7 +108,7 @@ Tetris.prototype.updateBoard = function (transformedPiece) {
 			// 	'Collision at ' + [pieceX, pieceY].join() + ' ' + pieceStructure);
 
 			assert(!(board[pieceY + i] && board[pieceY + i][pieceX + j] === 1 && pieceStructure[i][j] === 1), 
-				'Collision at ' + [pieceX, pieceY].join() + ' ' + pieceStructure);
+				'Collision at ' + [pieceY, pieceX].join());
 			if(!pieceHasLanded) { //last row
 				pieceHasLanded = pieceY + rows === this.boardSize || (pieceStructure[i][j] === 1 && board[pieceY + rows][pieceX + j] === 1); //
 			}
@@ -128,14 +122,11 @@ Tetris.prototype.updateBoard = function (transformedPiece) {
 		
 		for(i = 0; i < rows; i ++) {
 			for(j = 0; j < cols; j ++) {
-				console.log('Piece landed', pieceY, pieceX, board.length, pieceStructure, rows, cols, i , j)
 				if(pieceStructure[i][j] === 1) {
 					board[pieceY + i][pieceX + j] = 1;
-					console.log('Updating board', pieceY, pieceX + i, board[pieceY][pieceX + i])
 				}
 			}
 		}
-		console.log('Updated board', board)
 		this.pieceOnBoard = this.getRandomPiece();//put new random piece on board
 	} else {
 		pieceOnBoard.y ++;
@@ -164,7 +155,6 @@ Tetris.prototype.getRandomPiece = function getRandomPiece(x) {
 
 	var piece = Piece.pieces[randomIndex];
 
-	console.log('Piece on board', piece.getStructure());
 
 	return {piece: piece, x: x || Math.floor(this.boardSize / 2), y: 0};
 };

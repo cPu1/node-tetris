@@ -24,18 +24,18 @@ var board = {
 	},
 	//Check if current piece can make a valid move only after an invalid move has been made
 	handleInvalidMove: function (err) {
-		this.out.write(err + '*** ' + this.lastPieceWasImmovable);
+		this.out.write('\n' + err);
 		if(!this.tetris.allowsValidMove()) {
-			if(this.lastPieceWasImmovable) throw new GameoverError('Game over');
-			this.lastPieceWasImmovable = true;
 			this.tetris.generateRandomPiece();
-			this.render();
-		} else {
-			this.lastPieceWasImmovable = false;
+			if(this.tetris.allowsValidMove()) {
+				this.render();
+			} else {
+				throw new GameoverError('Game over');
+			}
 		}
 	},
 	clear: function () {
-		//this.out.write('\033c');
+		this.out.write('\033c');
 	},
 	render: function () {
 		var tetris = this.tetris,
@@ -77,7 +77,7 @@ var board = {
 
 
 function GameoverError (message) {
-    if(!(this instanceof ValidationError)) {
+    if(!(this instanceof GameoverError)) {
         return new GameoverError(message);
     }
     var err = this.err = Error.call(this, message);
