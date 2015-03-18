@@ -20,8 +20,8 @@ var Piece = {
 var piece = {
 	rotateRight: function () {
 		var structure = this.structure,
-			rowCount = structure[0].length,
-			colCount = structure.length,
+			rowCount = this.colCount,
+			colCount = this.rowCount,
 			transpose = [];
 
 		for(var i = 0; i < rowCount; i ++) {
@@ -36,8 +36,8 @@ var piece = {
 
 	rotateLeft: function () {
 		var structure = this.structure,
-			rowCount = structure[0].length,
-			colCount = structure.length,
+			rowCount = this.colCount,
+			colCount = this.rowCount,
 			transpose = [];
 
 		for(var i = 0; i < rowCount; i ++) {

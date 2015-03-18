@@ -14,8 +14,8 @@ function Tetris (options) {
 
 //move current piece left
 Tetris.prototype.movePieceLeft = function () {
-	var pieceOnBoard = this.pieceOnBoard,
-		updatedBoard;
+	var pieceOnBoard = this.pieceOnBoard;
+
 	assert(pieceOnBoard.x !== 0, 'Invalid move: x = -1');
 
 	pieceOnBoard.x --;
@@ -28,8 +28,8 @@ Tetris.prototype.movePieceLeft = function () {
 };
 
 Tetris.prototype.movePieceRight = function () {
-	var pieceOnBoard = this.pieceOnBoard,
-		updatedBoard;
+	var pieceOnBoard = this.pieceOnBoard;
+
 	assert(pieceOnBoard.x !== this.boardSize - 1, 'Invalid move: x = ' + this.boardSize + 1);
 	
 	pieceOnBoard.x ++;
@@ -110,7 +110,7 @@ Tetris.prototype.updateBoard = function (transformedPiece) {
 			assert(!(board[pieceY + i] && board[pieceY + i][pieceX + j] === 1 && pieceStructure[i][j] === 1), 
 				'Collision at ' + [pieceY, pieceX].join());
 			if(!pieceHasLanded) { //last row
-				pieceHasLanded = pieceY + rows === this.boardSize || (pieceStructure[i][j] === 1 && board[pieceY + rows][pieceX + j] === 1); //
+				pieceHasLanded = pieceY + rows === this.boardSize || (pieceStructure[i][j] === 1 && board[pieceY + i + 1][pieceX + j] === 1); //
 			}
 		}
 	}
